@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sari Stock - Tag Maker</title>
+
+  <style>
+    /* ---------------------------------------------------------
+       Sari Stock - shared styling
+       Palette: warm cream, oat, caramel and deep coffee brown
+    --------------------------------------------------------- */
+
+    :root {
+      --oat: #efe1cd;
+      --paper: #faf3e7;
+      --coffee: #43302b;
+      --caramel: #a9713f;
+      --caramel-dark: #7c5228;
+      --clay: #c68b59;
+      --line: #d8c3a0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Times New Roman", Times, serif;
+      color: var(--coffee);
+      background: radial-gradient(circle at 20% 0%, #f6ead6 0%, var(--oat) 45%, #e3cca7 100%);
+    }
+
+    /* Top bar --------------------------------------------------- */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.75rem;
+      background: var(--coffee);
+      color: var(--paper);
+    }
+
+    .topbar .brand {
+      font-size: 1.35rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+
+    .topbar .brand span {
+      color: var(--clay);
+    }
+
+    .topbar nav a {
+      color: var(--paper);
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 1rem;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+    }
+
+    .topbar nav a:hover,
+    .topbar nav a.current {
+      border-bottom: 1px solid var(--clay);
+    }
+
+    /* Page shell -------------------------------------------------- */
+
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 3.5rem 1.5rem 4rem;
+    }
+
+    /* Hang tag card (SKU page) ------------------------------------ */
+
+    .tag-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      background: var(--paper);
+      border-radius: 6px;
+      padding: 2rem 2rem 1.75rem;
+      transform: rotate(-1.2deg);
+      box-shadow: 10px 14px 0 rgba(67, 48, 43, 0.12), 0 2px 6px rgba(67, 48, 43, 0.18);
+    }
+
+    .tag-hole {
+      position: absolute;
+      top: -14px;
+      left: 34px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--oat);
+      border: 3px solid var(--clay);
+    }
+
+    .tag-hole::after {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: 8px;
+      width: 2px;
+      height: 22px;
+      background: var(--clay);
+      transform: rotate(18deg);
+    }
+
+    .tag-card h1 {
+      margin: 0.4rem 0 0.15rem;
+      font-size: 1.7rem;
+    }
+
+    .tag-card .subtitle {
+      margin: 0 0 1.5rem;
+      color: var(--caramel-dark);
+      font-style: italic;
+    }
+
+    .field {
+      margin-bottom: 1.1rem;
+    }
+
+    .field label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.35rem;
+    }
+
+    .field select,
+    .field input[type="text"],
+    .field input[type="number"] {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #fffdfa;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--coffee);
+    }
+
+    .field select:focus,
+    .field input:focus {
+      outline: 2px solid var(--clay);
+      outline-offset: 1px;
+    }
+
+    .action-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.4rem;
+      border: none;
+      border-radius: 3px;
+      background: var(--caramel);
+      color: var(--paper);
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: var(--caramel-dark);
+    }
+
+    .perforation {
+      border: none;
+      border-top: 2px dashed var(--clay);
+      margin: 1.6rem 0 1.3rem;
+    }
+
+    #tag_output,
+    #receipt_output {
+      min-height: 3rem;
+      text-align: center;
+    }
+
+    .hint {
+      color: var(--caramel-dark);
+      font-style: italic;
+      margin: 0;
+    }
+
+    .tag-label {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .tag-code {
+      margin: 0.35rem 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+      letter-spacing: 3px;
+      color: var(--caramel-dark);
+    }
+
+    .tag-meta {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #6d5a4c;
+    }
+
+    /* Receipt strip (receipt page) --------------------------------- */
+
+    .receipt-card {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      background: var(--paper);
+      padding: 2rem 1.9rem 2.5rem;
+      box-shadow: 0 6px 18px rgba(67, 48, 43, 0.2);
+      clip-path: polygon(
+        0% 0%, 100% 0%, 100% 96%,
+        92% 100%, 84% 96%, 76% 100%, 68% 96%, 60% 100%,
+        52% 96%, 44% 100%, 36% 96%, 28% 100%, 20% 96%,
+        12% 100%, 4% 96%, 0% 100%
+      );
+    }
+
+    .receipt-card h1 {
+      text-align: center;
+      margin: 0 0 0.1rem;
+      font-size: 1.5rem;
+    }
+
+    .receipt-card .subtitle {
+      text-align: center;
+      margin: 0 0 1.5rem;
+      font-style: italic;
+      color: var(--caramel-dark);
+    }
+
+    .menu-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.1rem;
+      border-bottom: 1px dotted var(--line);
+    }
+
+    .menu-row .item-name {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .menu-row input[type="checkbox"] {
+      width: 1.05rem;
+      height: 1.05rem;
+      accent-color: var(--caramel);
+    }
+
+    .menu-row .item-price {
+      color: var(--caramel-dark);
+      font-weight: bold;
+    }
+
+    .receipt-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0;
+      font-size: 1rem;
+    }
+
+    .receipt-total {
+      border-top: 2px dashed var(--clay);
+      margin-top: 0.5rem;
+      padding-top: 0.6rem;
+      font-weight: bold;
+      font-size: 1.15rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.4rem;
+      color: #8a725f;
+      font-size: 0.9rem;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.3.1/core.css">
+  <script type="module" src="https://pyscript.net/releases/2025.3.1/core.js"></script>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">Sari <span>Stock</span></div>
+    <nav>
+      <a class="current" href="index.html">Tag Maker</a>
+      <a href="receipt_generator.html">Counter Receipt</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="tag-card">
+      <div class="tag-hole"></div>
+
+      <h1>Stock Tag Maker</h1>
+      <p class="subtitle">Fill this in the way you'd write it on a shelf label.</p>
+
+      <div class="field">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="Fresh Goods">Fresh Goods</option>
+          <option value="Drinks">Drinks</option>
+          <option value="Single-Use">Single-Use</option>
+          <option value="Packing">Packing</option>
+          <option value="Supplies">Supplies</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="product_name">Product name</label>
+        <input type="text" id="product_name" placeholder="Calamansi Juice 500ml">
+      </div>
+
+      <div class="field">
+        <label for="quantity">Pieces on hand</label>
+        <input type="number" id="quantity" min="0" placeholder="40">
+      </div>
+
+      <button type="button" class="action-btn" py-click="generate_tag">Print Tag</button>
+
+      <hr class="perforation">
+
+      <div id="tag_output">
+        <p class="hint">Your tag code shows up here.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>OBMC Q1 project made by Adam & Dylan.</footer>
+
+  <py-script src="main.py"></py-script>
+</body>
+</html>
